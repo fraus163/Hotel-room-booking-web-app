@@ -4,6 +4,8 @@ import com.fraus.hotel.auth.domain.AuthService;
 import com.fraus.hotel.auth.web.dto.RegisterDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +25,12 @@ public class AuthController {
     }
 
     @GetMapping("/profile")
-    public String handlerProfile() {
+    public String handlerProfile(
+            Model model,
+            @AuthenticationPrincipal UserDetails user
+    ) {
+        var userDto = authService.findUserByUsername(user);
+        model.addAttribute("user", userDto);
         return "pages/profile";
     }
 
@@ -35,7 +42,6 @@ public class AuthController {
     @GetMapping("/register")
     public String handlerRegisterPage(Model model) {
         model.addAttribute("registerDto", new RegisterDto());
-
         return "pages/auth/register";
     }
 
@@ -45,7 +51,6 @@ public class AuthController {
     ) {
         log.info("Controller registerUser is called");
         authService.registerUser(registerDto);
-
         return "redirect:/";
     }
 }

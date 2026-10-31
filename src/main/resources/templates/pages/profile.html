@@ -5,10 +5,64 @@
     <title>Профиль</title>
 </head>
 <body>
-<div th:replace="~{fragments/ui :: header}"></div>
-<div class="main">
-
+<div th:replace="~{fragments/layout :: container(~{::#content})}">
+    <div id="content">
+        <dialog id="dialog">
+            <table>
+                <tr th:each="reservation : ${user.reservations()}">
+                    <td>
+                        <div>
+                            <div>
+                                <label for="roomName">Название номера</label>
+                                <h1 id="roomName" th:text="${reservation.room().name()}"></h1>
+                            </div>
+                            <div>
+                                <label for="arrivalDate">Дата заселения</label>
+                                <h3 id="arrivalDate" th:text="${reservation.arrivalDate()}"></h3>
+                            </div>
+                            <div>
+                                <label for="days">Срок пребывания (в днях)</label>
+                                <h3 id="days" th:text="${reservation.days()}"></h3>
+                            </div>
+                            <div>
+                                <label for="fullPrice">Полная стоимость</label>
+                                <h3 id="fullPrice">
+                                    <span th:text="${reservation.fullPrice()}"></span>
+                                    руб.
+                                </h3>
+                            </div>
+                            <div>
+                                <label for="status">Статус</label>
+                                <h3 id="status" th:switch="${reservation.status().name()}">
+                                    <span th:case="'STATUS_PENDING'">В ожидании</span>
+                                    <span th:case="'STATUS_APPROVED'">Принято</span>
+                                    <span th:case="'STATUS_CANCELLED'">Закрыто</span>
+                                    <span th:case="*">Неизвестный статус</span>
+                                </h3>
+                            </div>
+                            <div>
+                                <label for="createdAt">Дата создания заявки</label>
+                                <h3 id="createdAt" th:text="${#temporals.format(
+                                                        reservation.createdAt().atZone(T(java.time.ZoneId).of('Europe/Moscow')),
+                                                        'dd.MM.yyyy HH:mm')}"></h3>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <button onclick="document.getElementById('dialog').close()">Закрыть</button>
+        </dialog>
+        <h1>Профиль</h1>
+        <div>
+            <label for="login">Имя:</label>
+            <h3 id="login" th:text="${user.username()}"></h3>
+        </div>
+        <div>
+            <label for="email">Email:</label>
+            <h3 id="email" th:text="${user.email()}"></h3>
+        </div>
+        <button onclick="document.getElementById('dialog').showModal()">Заказы</button>
+    </div>
 </div>
-<div th:replace="~{fragments/ui :: footer}"></div>
 </body>
 </html>

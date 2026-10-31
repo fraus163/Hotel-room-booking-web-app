@@ -1,45 +1,46 @@
 package com.fraus.hotel.room.domain.db;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.jspecify.annotations.NonNull;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Table(name = "rooms")
 @Entity
-@NoArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class RoomEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Setter(AccessLevel.NONE)
+    @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(length = 50, nullable = false)
-    private String name;
+    @NonNull
+    @ManyToMany
+    @JoinTable(name = "tags_rooms", joinColumns = {@JoinColumn(name = "room_id")}, inverseJoinColumns = {@JoinColumn(name = "tag_id")})
+    private Set<TagEntity> tags = new LinkedHashSet<>();
 
-    private String description;
+    @Column(name = "price_per_night", nullable = false, precision = 10, scale = 2)
+    private BigDecimal pricePerNight;
 
-    private Integer people;
-
+    @Column(name = "area")
     private Integer area;
 
-    @Column(name = "price_per_night", nullable = false)
-    private BigDecimal price;
+    @Column(name = "people")
+    private Integer people;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "tags_rooms",
-            joinColumns = @JoinColumn(name = "room_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id")
-    )
-    @Setter(AccessLevel.NONE)
-    private Set<TagEntity> tags = new HashSet<>();
+    @Column(name = "description", length = Integer.MAX_VALUE)
+    private String description;
+
+    @Column(name = "name", nullable = false, length = 50)
+    private String name;
+
+    @Column(name = "enabled", nullable = false)
+    private Boolean enabled;
 }

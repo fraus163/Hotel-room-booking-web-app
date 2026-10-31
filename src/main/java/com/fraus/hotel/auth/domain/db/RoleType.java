@@ -1,5 +1,5 @@
 package com.fraus.hotel.auth.domain.db;
 
-public enum UserRole {
+public enum RoleType {
     ROLE_USER
 }

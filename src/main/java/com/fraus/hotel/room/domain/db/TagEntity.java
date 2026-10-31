@@ -1,23 +1,21 @@
 package com.fraus.hotel.room.domain.db;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Table(name = "tags")
 @Entity
-@NoArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class TagEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Setter(AccessLevel.NONE)
+    @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(length = 25, nullable = false, unique = true)
+    @Column(name = "name", nullable = false, length = 25)
     private String name;
 }

@@ -1,6 +1,5 @@
-package com.fraus.hotel.auth.domain;
+package com.fraus.hotel.auth.domain.db;
 
-import com.fraus.hotel.auth.domain.db.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

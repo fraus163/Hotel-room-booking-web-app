@@ -5,11 +5,8 @@
     <title>Главная</title>
 </head>
 <body>
-<div th:replace="~{fragments/ui :: header}"></div>
-<div class="main">
-    <h1>Название отеля</h1>
-    <p>Описание отеля</p>
+<div th:replace="~{fragments/layout :: container(~{::#content})}">
+    <h1 id="content">Контент</h1>
 </div>
-<div th:replace="~{fragments/ui :: footer}"></div>
 </body>
 </html>

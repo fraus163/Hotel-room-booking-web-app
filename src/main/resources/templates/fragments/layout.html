@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:fragment="container(content)" class="container">
+    <div class="header">
+        <h1>Hotel</h1>
+        <a th:href="@{/}">Главная</a>
+        <a th:href="@{/rooms}">Номера</a>
+        <a th:href="@{/profile}">Профиль</a>
+    </div>
+    <div class="main">
+        <div th:replace="${content}"></div>
+    </div>
+    <div class="footer">
+        <h3>Телефон</h3>
+        <h3>Адрес</h3>
+        <h3>Email</h3>
+    </div>
+</div>
+</body>
+</html>

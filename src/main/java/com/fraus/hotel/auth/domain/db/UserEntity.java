@@ -1,35 +1,43 @@
 package com.fraus.hotel.auth.domain.db;
 
+import com.fraus.hotel.reservation.domain.db.ReservationEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.jspecify.annotations.NonNull;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Table(name = "users")
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Setter(AccessLevel.NONE)
+    @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(length = 25, nullable = false, unique = true)
-    private String username;
+    @Column(name = "enabled", nullable = false)
+    private Boolean enabled;
 
-    @Column(length = 50, nullable = false, unique = true)
-    private String email;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false, length = 25)
+    private RoleType role;
 
-    @Column(length = 120, nullable = false)
+    @Column(name = "password", nullable = false, length = 120)
     private String password;
 
-    @Column(length = 25, nullable = false)
-    @Enumerated(EnumType.STRING)
-    private UserRole role;
+    @Column(name = "email", nullable = false, length = 50)
+    private String email;
 
-    private boolean enabled = true;
+    @Column(name = "username", nullable = false, length = 25)
+    private String username;
+
+    @NonNull
+    @OneToMany(mappedBy = "user")
+    private Set<ReservationEntity> reservations = new LinkedHashSet<>();
 }

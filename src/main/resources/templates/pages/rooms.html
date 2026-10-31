@@ -5,11 +5,65 @@
     <title>Номера</title>
 </head>
 <body>
-<div th:replace="~{fragments/ui :: header}"></div>
-<div class="main">
-    <h1>Название отеля</h1>
-    <p>Описание отеля</p>
+<dialog id="dialog">
+    <form th:action="@{/reservations}" method="post" th:object="${reservationDto}">
+        <input type="hidden" name="roomId" id="roomId">
+        <h1 id="roomName"></h1>
+        <label for="days">Выберите количество дней для бронирования</label>
+        <input th:field="*{days}" type="number" id="days" min="1" max="30">
+        <label for="arrivalDate">Выберите дату заселения</label>
+        <input th:field="*{arrivalDate}" type="date" id="arrivalDate">
+        <div>
+            <button type="submit">Забронировать</button>
+            <button type="button" onclick="dialog.close()">Закрыть</button>
+        </div>
+    </form>
+</dialog>
+<div th:replace="~{fragments/layout :: container(~{::#content})}">
+    <table id="content">
+        <tr th:each="room : ${rooms}">
+            <td>
+                <div>
+                    <h1 th:text="${room.getName()}"></h1>
+                    <p th:text="${room.getDescription()}"></p>
+                    <div>
+                        <h3>
+                            Количество гостей:
+                            <span th:text="${room.getPeople()}"></span>
+                        </h3>
+                        <h3>
+                            Площадь:
+                            <span th:text="${room.getArea()}"></span>
+                        </h3>
+                    </div>
+                    <h3>
+                        Цена за ночь:
+                        <span th:text="${room.getPricePerNight()}"></span>
+                        руб.
+                    </h3>
+                    <button
+                            th:data-id="${room.id}"
+                            th:data-name="${room.name}"
+                            th:onclick="|openDialog(this.dataset.id, this.dataset.name)|"
+                    >
+                        Забронировать
+                    </button>
+                </div>
+            </td>
+        </tr>
+    </table>
 </div>
-<div th:replace="~{fragments/ui :: footer}"></div>
+<script>
+    const dialog = document.getElementById("dialog");
+
+    function openDialog(roomId, roomName) {
+        document.getElementById("roomId").value = roomId;
+        document.getElementById("roomName").textContent = roomName;
+        dialog.showModal();
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('arrivalDate').setAttribute('min', today);
+</script>
 </body>
 </html>

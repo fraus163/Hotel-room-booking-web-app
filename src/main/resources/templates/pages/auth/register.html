@@ -9,15 +9,15 @@
     <h1>Регистрация</h1>
     <div>
         <label for="username">Логин</label>
-        <input th:field="*{username}" type="text" id="username">
+        <input th:field="*{username}" type="text" id="username" required autofocus>
     </div>
     <div>
         <label for="email">Email</label>
-        <input th:field="*{email}" type="text" id="email">
+        <input th:field="*{email}" type="text" id="email" required>
     </div>
     <div>
         <label for="password">Пароль</label>
-        <input th:field="*{password}" type="password" id="password">
+        <input th:field="*{password}" type="password" id="password" required>
     </div>
     <button type="submit">Зарегистрироваться</button>
 </form>

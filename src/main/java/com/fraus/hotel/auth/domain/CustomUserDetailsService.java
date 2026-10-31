@@ -1,6 +1,7 @@
 package com.fraus.hotel.auth.domain;
 
 import com.fraus.hotel.auth.domain.db.UserEntity;
+import com.fraus.hotel.auth.domain.db.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -25,7 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new User(
                 user.getUsername(),
                 user.getPassword(),
-                user.isEnabled(),
+                user.getEnabled(),
                 true, true, true,
                 Set.of(new SimpleGrantedAuthority(user.getRole().name()))
         );
