@@ -3,23 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body>
-<div th:fragment="container(content)" class="container">
-    <div class="header">
-        <h1>Hotel</h1>
-        <a th:href="@{/}">Главная</a>
-        <a th:href="@{/rooms}">Номера</a>
-        <a th:href="@{/profile}">Профиль</a>
+<body th:fragment="container(content, activeTab)" class="align-items-center justify-content-center min-vh-100">
+<header class="d-flex justify-content-between align-items-center px-5 py-3 bg-primary">
+    <div class="d-flex justify-content-center align-items-center">
+        <img th:src="@{/img/logo.png}" alt="" width="100" height="100">
+        <h1 class="text-white">Волга Гранд Резиденс</h1>
     </div>
-    <div class="main">
-        <div th:replace="${content}"></div>
-    </div>
-    <div class="footer">
-        <h3>Телефон</h3>
-        <h3>Адрес</h3>
-        <h3>Email</h3>
-    </div>
-</div>
+    <nav>
+        <ul class="nav nav-underline">
+            <li class="nav-item">
+                <a class="nav-link text-white"
+                   th:classappend="${activeTab == 'home'} ? 'active disabled'"
+                   th:href="@{/}">Главная</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white"
+                   th:classappend="${activeTab == 'rooms'} ? 'active disabled'"
+                   th:href="@{/rooms}">Номера</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white"
+                   th:classappend="${activeTab == 'profile'} ? 'active disabled'"
+                   th:href="@{/profile}">Профиль</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" th:href="@{/logout}">
+                    <i class="bi bi-box-arrow-right p-2 fs-5 text-white"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="p-5">
+    <div th:replace="${content}"></div>
+</main>
 </body>
 </html>

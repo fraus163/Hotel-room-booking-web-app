@@ -3,67 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <title>Номера</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
 </head>
-<body>
-<dialog id="dialog">
-    <form th:action="@{/reservations}" method="post" th:object="${reservationDto}">
-        <input type="hidden" name="roomId" id="roomId">
-        <h1 id="roomName"></h1>
-        <label for="days">Выберите количество дней для бронирования</label>
-        <input th:field="*{days}" type="number" id="days" min="1" max="30">
-        <label for="arrivalDate">Выберите дату заселения</label>
-        <input th:field="*{arrivalDate}" type="date" id="arrivalDate">
-        <div>
-            <button type="submit">Забронировать</button>
-            <button type="button" onclick="dialog.close()">Закрыть</button>
-        </div>
-    </form>
-</dialog>
-<div th:replace="~{fragments/layout :: container(~{::#content})}">
-    <table id="content">
+<body th:replace="~{fragments/layout :: container(~{::#content}, 'rooms')}">
+<div id="content">
+    <dialog id="dialog">
+        <form th:action="@{/reservations}" method="post" th:object="${reservationDto}">
+            <input type="hidden" name="roomId" id="roomId">
+            <h1 id="roomName"></h1>
+            <label for="days">Выберите количество дней для бронирования</label>
+            <input th:field="*{days}" type="number" id="days" min="1" max="30">
+            <label for="arrivalDate">Выберите дату заселения</label>
+            <input th:field="*{arrivalDate}" type="date" id="arrivalDate">
+            <div>
+                <button type="submit">Забронировать</button>
+                <button type="button" onclick="dialog.close()">Закрыть</button>
+            </div>
+        </form>
+    </dialog>
+    <table>
         <tr th:each="room : ${rooms}">
             <td>
-                <div>
-                    <h1 th:text="${room.getName()}"></h1>
-                    <p th:text="${room.getDescription()}"></p>
-                    <div>
-                        <h3>
-                            Количество гостей:
+                <div class="card">
+                    <div class="content">
+                        <p th:text="${room.getName()}" class="heading"></p>
+                        <p class="para">
+                            <span th:text="${room.getDescription()}"></span>
                             <span th:text="${room.getPeople()}"></span>
-                        </h3>
-                        <h3>
-                            Площадь:
                             <span th:text="${room.getArea()}"></span>
-                        </h3>
+                            <span th:text="${room.getPricePerNight()}"></span>
+                        </p>
+                        <button
+                                th:data-id="${room.id}"
+                                th:data-name="${room.name}"
+                                th:onclick="|openDialog(this.dataset.id, this.dataset.name)|"
+                        >
+                            Забронировать
+                        </button>
                     </div>
-                    <h3>
-                        Цена за ночь:
-                        <span th:text="${room.getPricePerNight()}"></span>
-                        руб.
-                    </h3>
-                    <button
-                            th:data-id="${room.id}"
-                            th:data-name="${room.name}"
-                            th:onclick="|openDialog(this.dataset.id, this.dataset.name)|"
-                    >
-                        Забронировать
-                    </button>
                 </div>
             </td>
         </tr>
     </table>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const dialog = document.getElementById("dialog");
+
+        function openDialog(roomId, roomName) {
+            document.getElementById("roomId").value = roomId;
+            document.getElementById("roomName").textContent = roomName;
+            dialog.showModal();
+        }
+
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('arrivalDate').setAttribute('min', today);
+    </script>
 </div>
-<script>
-    const dialog = document.getElementById("dialog");
-
-    function openDialog(roomId, roomName) {
-        document.getElementById("roomId").value = roomId;
-        document.getElementById("roomName").textContent = roomName;
-        dialog.showModal();
-    }
-
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('arrivalDate').setAttribute('min', today);
-</script>
 </body>
 </html>
