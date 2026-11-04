@@ -10,7 +10,7 @@
 </head>
 <body>
 <div th:replace="~{fragments/layout :: container(~{::#content}, 'profile')}">
-    <div id="content">
+    <div class="container" id="content">
         <dialog id="dialog">
             <table>
                 <tr th:each="reservation : ${user.reservations()}">
@@ -56,16 +56,16 @@
             </table>
             <button onclick="document.getElementById('dialog').close()">Закрыть</button>
         </dialog>
-        <h1>Профиль</h1>
+        <h1 class="mb-4">Информация о профиле</h1>
         <div>
             <label for="login">Имя:</label>
             <h3 id="login" th:text="${user.username()}"></h3>
         </div>
-        <div>
+        <div class="mb-4">
             <label for="email">Email:</label>
             <h3 id="email" th:text="${user.email()}"></h3>
         </div>
-        <button onclick="document.getElementById('dialog').showModal()">Заказы</button>
+        <button class="btn btn-primary" onclick="document.getElementById('dialog').showModal()">Заказы</button>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
