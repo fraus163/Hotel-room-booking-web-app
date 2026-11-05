@@ -7,6 +7,7 @@ import java.util.Set;
  * DTO for {@link com.fraus.hotel.room.domain.db.RoomEntity}
  */
 public record RoomDto(
+        Long id,
         Set<TagDto> tags,
         BigDecimal pricePerNight,
         Integer area,

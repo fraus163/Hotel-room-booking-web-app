@@ -4,6 +4,8 @@ import com.fraus.hotel.auth.domain.AuthService;
 import com.fraus.hotel.auth.web.dto.RegisterDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -26,11 +28,32 @@ public class AuthController {
 
     @GetMapping("/profile")
     public String handlerProfile(
+            @PageableDefault(page = 0, size = 5) Pageable pageable,
             Model model,
             @AuthenticationPrincipal UserDetails user
     ) {
-        var userDto = authService.findUserByUsername(user);
+        var userDto = authService.findUserByUsername(user, pageable);
+
+        int totalPages = userDto.reservations().getTotalPages();
+        int currentPage = userDto.reservations().getNumber() + 1;
+
+        int startPage = 1;
+        int endPage = totalPages;
+
+        if (totalPages > 5) {
+            startPage = Math.max(1, currentPage - 2);
+            endPage = Math.min(totalPages, currentPage + 2);
+
+            if (currentPage <= 3) {
+                endPage = 5;
+            } else if (currentPage >= totalPages -2) {
+                startPage = totalPages - 4;
+            }
+        }
+
         model.addAttribute("user", userDto);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
         return "pages/profile";
     }
 

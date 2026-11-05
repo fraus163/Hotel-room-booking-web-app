@@ -9,51 +9,11 @@
     <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
 </head>
 <body th:replace="~{fragments/layout :: container(~{::#content}, 'rooms')}">
-    <div id="content" class="container flex-column d-flex justify-content-center align-items-center">
-        <dialog id="dialog" class="border border-secondary rounded">
-            <div class="card">
-                <form th:action="@{/reservations}" method="post" th:object="${reservationDto}">
-                    <div class="card-body">
-                        <input type="hidden" name="roomId" id="roomId">
-                        <h1 class="card-title" id="roomName"></h1>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            <div>
-                                <label class="form-label small text-muted" for="days">Количество дней для бронирования</label>
-                                <input class="form-control"
-                                       th:field="*{days}"
-                                       type="number"
-                                       id="days"
-                                       min="1"
-                                       max="30"
-                                       required
-                                       autofocus
-                                       placeholder="Выберите кол-во дней">
-                            </div>
-                        </li>
-                        <li class="list-group-item">
-                            <div>
-                                <label class="form-label small text-muted" for="arrivalDate">Дата заселения</label>
-                                <input class="form-control"
-                                       th:field="*{arrivalDate}"
-                                       type="date"
-                                       id="arrivalDate"
-                                       required>
-                            </div>
-                        </li>
-                    </ul>
-                    <div class="card-body">
-                        <button class="btn btn-success" type="submit">Забронировать</button>
-                        <button class="btn btn-danger" type="button" onclick="dialog.close()">Закрыть</button>
-                    </div>
-                </form>
-            </div>
-        </dialog>
+    <div id="content" class="container flex-column d-flex align-items-center" style="height: 100vh">
         <div class="container">
             <div class="row row-cols-auto">
                 <div class="col mb-4" th:each="room : ${rooms.getContent()}">
-                    <div class="card border border-info" style="width: 18rem; height: 100%">
+                    <div class="card" style="width: 18rem; height: 100%">
                         <div class="card-body">
                             <h1 th:text="${room.getName()}" class="card-title"></h1>
                             <p class="card-text" th:text="${room.getDescription()}"></p>
@@ -88,15 +48,8 @@
                                 </p>
                             </li>
                         </ul>
-                        <div class="card-body">
-                            <button
-                                    th:data-id="${room.id}"
-                                    th:data-name="${room.name}"
-                                    th:onclick="|openDialog(this.dataset.id, this.dataset.name)|"
-                                    class="btn btn-primary"
-                            >
-                                Забронировать
-                            </button>
+                        <div class="card-body" style="max-height: 70px">
+                            <a class="btn btn-primary" th:href="@{/rooms/{id}(id=${room.getId()})}">Забронировать</a>
                         </div>
                     </div>
                 </div>
@@ -121,18 +74,6 @@
             </ul>
         </nav>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script>
-            const dialog = document.getElementById("dialog");
-
-            function openDialog(roomId, roomName) {
-                document.getElementById("roomId").value = roomId;
-                document.getElementById("roomName").textContent = roomName;
-                dialog.showModal();
-            }
-
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('arrivalDate').setAttribute('min', today);
-        </script>
     </div>
 </body>
 </html>

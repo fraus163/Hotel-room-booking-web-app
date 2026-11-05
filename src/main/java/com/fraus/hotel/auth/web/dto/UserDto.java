@@ -1,6 +1,7 @@
 package com.fraus.hotel.auth.web.dto;
 
 import com.fraus.hotel.reservation.web.dto.ReservationResponseDto;
+import org.springframework.data.domain.Page;
 
 import java.util.Set;
 
@@ -10,6 +11,6 @@ import java.util.Set;
 public record UserDto(
         String email,
         String username,
-        Set<ReservationResponseDto> reservations
+        Page<ReservationResponseDto> reservations
 ) {
 }
