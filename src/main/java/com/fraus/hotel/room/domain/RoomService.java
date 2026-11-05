@@ -3,6 +3,8 @@ package com.fraus.hotel.room.domain;
 import com.fraus.hotel.room.domain.db.RoomEntity;
 import com.fraus.hotel.room.domain.db.RoomRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,7 +15,7 @@ public class RoomService {
 
     private final RoomRepository roomRepository;
 
-    public List<RoomEntity> getEnabledRooms() {
-        return roomRepository.findByEnabled(true);
+    public Page<RoomEntity> getEnabledRooms(Pageable pageable) {
+        return roomRepository.findByEnabled(pageable, true);
     }
 }
