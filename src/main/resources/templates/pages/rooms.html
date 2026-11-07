@@ -10,14 +10,17 @@
 </head>
 <body th:replace="~{fragments/layout :: container(~{::#content}, 'rooms')}">
     <div id="content" class="container flex-column d-flex align-items-center" style="height: 100vh">
-        <div th:if="${rooms.isEmpty()}">
-            <h1>Нет доступных номеров :(</h1>
-        </div>
-        <form class="d-flex justify-content-center gap-2 mb-3" th:action="@{/rooms}" th:object="${searchDto}" method="get" th:unless="${rooms.isEmpty()}">
-            <input th:field="*{name}" type="text" class="form-control" id="search" placeholder="Поиск">
-            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                <i class="bi bi-filter"></i>
-            </button>
+        <form class="d-flex justify-content-center gap-2 mb-3" th:action="@{/rooms}" th:object="${filter}" method="get">
+            <input th:field="*{name}" type="text" class="form-control" placeholder="Поиск">
+            <div class="btn-group">
+                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <i class="bi bi-filter"></i>
+                </button>
+                <button id="clearFilterBtn" type="button" class="btn btn-danger">
+                    <i class="bi bi-trash-fill"></i>
+                </button>
+            </div>
+            <button type="submit" class="btn btn-primary">Найти</button>
             <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
@@ -72,8 +75,10 @@
                     </div>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">Найти</button>
         </form>
+        <div class="d-flex align-items-center" style="height: 100%" th:if="${rooms.isEmpty()}">
+            <h1>Нет доступных номеров :(</h1>
+        </div>
         <div class="container d-flex justify-content-center" th:unless="${rooms.isEmpty()}">
             <div class="row row-cols-auto d-flex justify-content-center">
                 <div class="col mb-4" th:each="room : ${rooms.getContent()}">
@@ -123,29 +128,57 @@
             <ul class="pagination">
                 <li class="page-item"
                     th:classappend="${!rooms.hasPrevious()} ? 'disabled'">
-                    <a class="page-link" th:href="@{/rooms(page=${rooms.getNumber() - 1}, size=8)}">Назад</a>
+                    <a class="page-link"
+                       th:href="@{/rooms(page=${rooms.getNumber() - 1},
+                                        size=8,
+                                        name=${filter.getName()},
+                                        priceFrom=${filter.getPriceFrom()},
+                                        priceTo=${filter.getPriceTo()},
+                                        area=${filter.getArea()},
+                                        people=${filter.getPeople()})}">
+                        Назад
+                    </a>
                 </li>
                 <li th:each="i : ${#numbers.sequence(startPage, endPage)}" class="page-item"
                     aria-current=""
                     th:attrappend="aria-content=${rooms.getNumber() + 1 == i} ? 'page': ''"
                     th:classappend="${rooms.getNumber() + 1 == i} ? 'active'">
-                    <a th:text="${i}" class="page-link" th:href="@{/rooms(page=${i - 1}, size=8)}"></a>
+                    <a th:text="${i}"
+                       class="page-link"
+                       th:href="@{/rooms(page=${i - 1},
+                                        size=8,
+                                        name=${filter.getName()},
+                                        priceFrom=${filter.getPriceFrom()},
+                                        priceTo=${filter.getPriceTo()},
+                                        area=${filter.getArea()},
+                                        people=${filter.getPeople()})}"></a>
                 </li>
                 <li class="page-item"
                     th:classappend="${!rooms.hasNext()} ? 'disabled'">
-                    <a class="page-link" th:href="@{/rooms(page=${rooms.getNumber() + 1}, size=8)}">Вперед</a>
+                    <a class="page-link"
+                       th:href="@{/rooms(page=${rooms.getNumber() + 1},
+                                        size=8,
+                                        name=${filter.getName()},
+                                        priceFrom=${filter.getPriceFrom()},
+                                        priceTo=${filter.getPriceTo()},
+                                        area=${filter.getArea()},
+                                        people=${filter.getPeople()})}"
+                    >
+                        Вперед
+                    </a>
                 </li>
             </ul>
         </nav>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script th:inline="javascript">
-            let priceFrom = [[${searchDto.priceFrom}]];
-            let priceTo = [[${searchDto.priceTo}]];
-            let area = [[${searchDto.area}]];
-            let people = [[${searchDto.people}]];
+            let priceFrom = [[${filter.priceFrom}]];
+            let priceTo = [[${filter.priceTo}]];
+            let area = [[${filter.area}]];
+            let people = [[${filter.people}]];
 
             const submitDialogBtn = document.getElementById('submitDialogBtn');
             const cancelDialogBtn = document.getElementById('cancelDialogBtn');
+            const clearFilerBtn = document.getElementById('clearFilterBtn');
 
             const priceFromField = document.getElementById('priceFrom');
             const priceToField = document.getElementById('priceTo');
@@ -164,6 +197,20 @@
                 priceToField.value = priceTo;
                 areaField.value = area;
                 peopleField.value = people;
+            });
+
+            clearFilerBtn.addEventListener('click', () => {
+                priceFromField.value = '';
+                priceFrom = null;
+
+                priceToField.value = '';
+                priceTo = null;
+
+                areaField.value = '';
+                area = null;
+
+                peopleField.value = '';
+                people = null;
             });
         </script>
     </div>

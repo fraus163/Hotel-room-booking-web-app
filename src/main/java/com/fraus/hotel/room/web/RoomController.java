@@ -3,7 +3,7 @@ package com.fraus.hotel.room.web;
 import com.fraus.hotel.reservation.web.dto.ReservationDto;
 import com.fraus.hotel.room.domain.RoomService;
 import com.fraus.hotel.room.web.dto.RoomDto;
-import com.fraus.hotel.room.web.dto.SearchDto;
+import com.fraus.hotel.room.web.dto.RoomFilterDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -23,11 +23,10 @@ public class RoomController {
     @GetMapping
     public String handlerRoomsPage(
             @PageableDefault(page = 0, size = 8) Pageable pageable,
-            @ModelAttribute("searchDto") SearchDto searchDto,
+            @ModelAttribute("filter") RoomFilterDto roomFilterDto,
             Model model
     ) {
-        log.info("Controller handlerRoomsPage is called: searchDto={}", searchDto);
-        var rooms = roomService.getEnabledRooms(pageable);
+        var rooms = roomService.getEnabledRooms(pageable, roomFilterDto);
 
         int totalPages = rooms.getTotalPages();
         int currentPage = rooms.getNumber() + 1;
@@ -48,7 +47,13 @@ public class RoomController {
 
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
-        model.addAttribute("searchDto", new SearchDto());
+        model.addAttribute("filter", new RoomFilterDto(
+                null,
+                roomFilterDto.getPriceFrom(),
+                roomFilterDto.getPriceTo(),
+                roomFilterDto.getArea(),
+                roomFilterDto.getPeople()
+        ));
         model.addAttribute("rooms", rooms);
 
         return "pages/rooms";

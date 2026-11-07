@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class SearchDto {
+public class RoomFilterDto {
     private String name;
     private BigDecimal priceFrom;
     private BigDecimal priceTo;
