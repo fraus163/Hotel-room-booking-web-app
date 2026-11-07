@@ -10,8 +10,70 @@
 </head>
 <body th:replace="~{fragments/layout :: container(~{::#content}, 'rooms')}">
     <div id="content" class="container flex-column d-flex align-items-center" style="height: 100vh">
-        <div class="container">
-            <div class="row row-cols-auto">
+        <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Фильтр номеров</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="d-flex mb-3">
+                            <div>
+                                <label for="priceFrom" class="form-label small text-muted">Цена от</label>
+                                <input id="priceFrom"
+                                       type="number"
+                                       min="1"
+                                       class="form-control"
+                                       placeholder="Введите цену"
+                                       autofocus/>
+                            </div>
+                            <div>
+                                <label for="priceTo" class="form-label small text-muted">Цена до</label>
+                                <input id="priceTo"
+                                       type="number"
+                                       th:text="${searchDto.priceTo}"
+                                       min="1"
+                                       class="form-control"
+                                       placeholder="Введите цену"
+                                       autofocus/>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="area" class="form-label small text-muted">Площадь</label>
+                            <input id="area"
+                                   type="number"
+                                   min="1"
+                                   class="form-control"
+                                   placeholder="Введите площадь"
+                                   autofocus/>
+                        </div>
+                        <div>
+                            <label for="people" class="form-label small text-muted">Кол-во людей</label>
+                            <input id="people"
+                                   type="number"
+                                   min="1"
+                                   class="form-control"
+                                   placeholder="Введите кол-во людей"
+                                   autofocus/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="cancelDialogBtn" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button id="submitDialogBtn" type="button" class="btn btn-primary" data-bs-dismiss="modal">Сохранить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form class="d-flex justify-content-center gap-2 mb-3" th:action="@{/rooms}" th:object="${searchDto}">
+            <input th:field="*{name}" type="text" class="form-control" id="search" placeholder="Поиск">
+            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <i class="bi bi-filter"></i>
+            </button>
+            <button type="submit" class="btn btn-primary">Найти</button>
+        </form>
+        <div class="container d-flex justify-content-center">
+            <div class="row row-cols-auto d-flex justify-content-center">
                 <div class="col mb-4" th:each="room : ${rooms.getContent()}">
                     <div class="card" style="width: 18rem; height: 100%">
                         <div class="card-body">
@@ -74,6 +136,16 @@
             </ul>
         </nav>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            const searchDto = /*[[${searchDto}]]*/ null;
+            const submitDialogBtn = document.getElementById('submitDialogBtn');
+            const priceToField = document.getElementById('priceTo');
+
+            submitDialogBtn.addEventListener('click', () => {
+                searchDto.priceTo = priceToField.text;
+                console.log(searchDto);
+            });
+        </script>
     </div>
 </body>
 </html>

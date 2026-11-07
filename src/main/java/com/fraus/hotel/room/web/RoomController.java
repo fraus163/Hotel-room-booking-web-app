@@ -3,6 +3,7 @@ package com.fraus.hotel.room.web;
 import com.fraus.hotel.reservation.web.dto.ReservationDto;
 import com.fraus.hotel.room.domain.RoomService;
 import com.fraus.hotel.room.web.dto.RoomDto;
+import com.fraus.hotel.room.web.dto.SearchDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -47,6 +48,7 @@ public class RoomController {
 
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
+        model.addAttribute("searchDto", new SearchDto());
         model.addAttribute("rooms", rooms);
 
         return "pages/rooms";
