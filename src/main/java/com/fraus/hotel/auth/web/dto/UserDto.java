@@ -9,8 +9,8 @@ import java.util.Set;
  * DTO for {@link com.fraus.hotel.auth.domain.db.UserEntity}
  */
 public record UserDto(
-        String email,
         String username,
+        String email,
         Page<ReservationResponseDto> reservations
 ) {
 }

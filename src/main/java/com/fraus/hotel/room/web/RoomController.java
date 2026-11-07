@@ -10,9 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/rooms")
@@ -25,8 +23,10 @@ public class RoomController {
     @GetMapping
     public String handlerRoomsPage(
             @PageableDefault(page = 0, size = 8) Pageable pageable,
+            @ModelAttribute("searchDto") SearchDto searchDto,
             Model model
     ) {
+        log.info("Controller handlerRoomsPage is called: searchDto={}", searchDto);
         var rooms = roomService.getEnabledRooms(pageable);
 
         int totalPages = rooms.getTotalPages();
