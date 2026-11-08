@@ -9,87 +9,87 @@
     <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
 </head>
 <body th:replace="~{fragments/layout :: container(~{::#content}, 'profile')}">
-    <div id="content" class="d-flex flex-column">
-        <div class="card mb-4">
+    <div id="content" class="d-flex flex-column w-100">
+        <div class="card mb-4 shadow-sm">
             <div class="card-body">
-                <h1 class=" card-title mb-4">Информация о профиле</h1>
-                <div class="d-flex gap-4">
+                <h1 class="card-title fs-3 mb-4">Информация о профиле</h1>
+                <div class="d-flex flex-column flex-sm-row gap-3 gap-sm-5">
                     <div class="d-flex align-items-baseline gap-2">
-                        <label class="h4" for="login">Имя:</label>
-                        <h4 id="login" th:text="${user.username()}"></h4>
+                        <label class="h5 text-muted" for="login">Имя:</label>
+                        <h4 id="login" class="mb-0" th:text="${userDto.username()}"></h4>
                     </div>
                     <div class="d-flex align-items-baseline gap-2">
-                        <label class="h4" for="email">Email:</label>
-                        <h4 id="email" th:text="${user.email()}"></h4>
+                        <label class="h5 text-muted" for="email">Email:</label>
+                        <h4 id="email" class="mb-0" th:text="${userDto.email()}"></h4>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="card mb-4">
+        <div class="card mb-4 shadow-sm">
             <div class="card-body">
-                <h1 class="card-title mb-4">Заказы</h1>
-                <div class="card-text" th:if="${user.reservations().isEmpty()}">
+                <h1 class="card-title fs-3 mb-4">Заказы</h1>
+                <div class="card-text text-muted" th:if="${userDto.reservations().isEmpty()}">
                     <h4>Вы еще ничего не заказывали</h4>
                 </div>
-                <div class="container p-0 m-0" th:unless="${user.reservations().isEmpty()}">
-                    <div class="row row-cols-auto">
-                        <div class="col mb-4" th:each="reservation : ${user.reservations()}">
-                            <div class="card" style="width: 18rem; height: 100%">
+                <div class="container-fluid p-0" th:unless="${userDto.reservations().isEmpty()}">
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4">
+                        <div class="col" th:each="reservation : ${userDto.reservations()}">
+                            <div class="card h-100 shadow-sm">
                                 <div class="card-body">
-                                    <h1 th:text="${reservation.room().name()}" class="card-title"></h1>
+                                    <h2 th:text="${reservation.room().name()}" class="card-title fs-5"></h2>
                                 </div>
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item">
                                         <label for="arrivalDate" class="form-label small text-muted">Дата заселения</label>
-                                        <h4 id="arrivalDate" th:text="${reservation.arrivalDate()}"></h4>
+                                        <h5 id="arrivalDate" th:text="${reservation.arrivalDate()}"></h5>
                                     </li>
                                     <li class="list-group-item">
                                         <label for="days" class="form-label small text-muted">Дней пребывания</label>
-                                        <h4 id="days" th:text="${reservation.days()}"></h4>
+                                        <h5 id="days" th:text="${reservation.days()}"></h5>
                                     </li>
                                     <li class="list-group-item">
                                         <label for="fullPrice" class="form-label small text-muted">Полная стоимость</label>
-                                        <h4 id="fullPrice">
+                                        <h5 id="fullPrice">
                                             <span th:text="${reservation.fullPrice()}"></span>
                                             руб.
-                                        </h4>
+                                        </h5>
                                     </li>
                                     <li class="list-group-item">
                                         <label for="status" class="form-label small text-muted">Статус заявки</label>
-                                        <h4 id="status" th:switch="${reservation.status().name()}">
-                                            <span th:case="'STATUS_PENDING'">В ожидании</span>
-                                            <span th:case="'STATUS_APPROVED'">Принято</span>
-                                            <span th:case="'STATUS_CANCELLED'">Закрыто</span>
-                                            <span th:case="*">Неизвестный статус</span>
-                                        </h4>
+                                        <h5 id="status" th:switch="${reservation.status().name()}">
+                                            <span th:case="'STATUS_PENDING'" class="badge bg-warning text-dark">В ожидании</span>
+                                            <span th:case="'STATUS_APPROVED'" class="badge bg-success">Принято</span>
+                                            <span th:case="'STATUS_CANCELLED'" class="badge bg-danger">Закрыто</span>
+                                            <span th:case="*" class="badge bg-secondary">Неизвестный статус</span>
+                                        </h5>
                                     </li>
                                     <li class="list-group-item">
                                         <label for="createdAt" class="form-label small text-muted">Дата и время отправления заявки</label>
-                                        <h4 id="createdAt" th:text="${#temporals.format(
+                                        <h6 id="createdAt" class="text-secondary" th:text="${#temporals.format(
                                                             reservation.createdAt().atZone(T(java.time.ZoneId).of('Europe/Moscow')),
-                                                            'dd.MM.yyyy HH:mm')}"></h4>
+                                                            'dd.MM.yyyy HH:mm')}"></h6>
                                     </li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="d-flex justify-content-center align-items-center" th:unless="${user.reservations().isEmpty()}">
+                <div class="d-flex justify-content-center align-items-center mt-4" th:unless="${userDto.reservations().isEmpty()}">
                     <nav aria-label="...">
-                        <ul class="pagination">
+                        <ul class="pagination flex-wrap justify-content-center">
                             <li class="page-item"
-                                th:classappend="${!user.reservations().hasPrevious()} ? 'disabled'">
-                                <a class="page-link" th:href="@{/profile(page=${user.reservations().getNumber() - 1}, size=8)}">Назад</a>
+                                th:classappend="${!userDto.reservations().hasPrevious()} ? 'disabled'">
+                                <a class="page-link" th:href="@{/profile(page=${userDto.reservations().getNumber() - 1}, size=8)}">Назад</a>
                             </li>
                             <li th:each="i : ${#numbers.sequence(startPage, endPage)}" class="page-item"
                                 aria-current=""
-                                th:attrappend="aria-content=${user.reservations().getNumber() + 1 == i} ? 'page': ''"
-                                th:classappend="${user.reservations().getNumber() + 1 == i} ? 'active'">
+                                th:attrappend="aria-content=${userDto.reservations().getNumber() + 1 == i} ? 'page': ''"
+                                th:classappend="${userDto.reservations().getNumber() + 1 == i} ? 'active'">
                                 <a th:text="${i}" class="page-link" th:href="@{/profile(page=${i - 1}, size=8)}"></a>
                             </li>
                             <li class="page-item"
-                                th:classappend="${!user.reservations().hasNext()} ? 'disabled'">
-                                <a class="page-link" th:href="@{/profile(page=${user.reservations().getNumber() + 1}, size=8)}">Вперед</a>
+                                th:classappend="${!userDto.reservations().hasNext()} ? 'disabled'">
+                                <a class="page-link" th:href="@{/profile(page=${userDto.reservations().getNumber() + 1}, size=8)}">Вперед</a>
                             </li>
                         </ul>
                     </nav>

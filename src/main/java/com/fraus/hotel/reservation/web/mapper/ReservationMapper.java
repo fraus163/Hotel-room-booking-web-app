@@ -9,7 +9,5 @@ import org.mapstruct.ReportingPolicy;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {RoomMapper.class})
 public interface ReservationMapper {
-    ReservationEntity toEntity(ReservationResponseDto reservationResponseDto);
-
     ReservationResponseDto toReservationResponseDto(ReservationEntity reservationEntity);
 }

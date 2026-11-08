@@ -9,11 +9,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
@@ -21,14 +23,13 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEntity user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден: " + username));
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден: username" + username));
 
-        return new User(
-                user.getUsername(),
-                user.getPassword(),
-                user.getEnabled(),
-                true, true, true,
-                Set.of(new SimpleGrantedAuthority(user.getRole().name()))
-        );
+        return User.builder()
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .disabled(!user.getEnabled())
+                .authorities(Set.of(new SimpleGrantedAuthority(user.getRole().name())))
+                .build();
     }
 }

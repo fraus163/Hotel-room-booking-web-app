@@ -11,9 +11,7 @@ import java.util.Set;
 @Table(name = "users")
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
-@Setter
 public class UserEntity {
 
     @Id
@@ -40,4 +38,13 @@ public class UserEntity {
     @NonNull
     @OneToMany(mappedBy = "user")
     private Set<ReservationEntity> reservations = new LinkedHashSet<>();
+
+    @Builder
+    public UserEntity(Boolean enabled, RoleType role, String password, String email, String username) {
+        this.enabled = enabled;
+        this.role = role;
+        this.password = password;
+        this.email = email;
+        this.username = username;
+    }
 }

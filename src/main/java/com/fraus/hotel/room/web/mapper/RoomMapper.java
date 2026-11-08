@@ -8,7 +8,5 @@ import org.mapstruct.ReportingPolicy;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {TagMapper.class})
 public interface RoomMapper {
-    RoomEntity toEntity(RoomDto roomDto);
-
     RoomDto toRoomDto(RoomEntity roomEntity);
 }

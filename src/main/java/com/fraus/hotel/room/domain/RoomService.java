@@ -9,18 +9,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class RoomService {
 
     private final RoomRepository roomRepository;
     private final RoomMapper roomMapper;
 
-    public Page<RoomEntity> getEnabledRooms(Pageable pageable, RoomFilterDto roomFilterDto) {
-        return roomRepository.findByFilterAndEnabled(
+    public Page<RoomDto> getRoomsByFilter(Pageable pageable, RoomFilterDto roomFilterDto) {
+        var foundedRooms = roomRepository.findRoomsByFilter(
                 pageable,
                 roomFilterDto.getName(),
                 roomFilterDto.getPriceFrom(),
@@ -29,10 +29,11 @@ public class RoomService {
                 roomFilterDto.getPeople(),
                 true
         );
+        return foundedRooms.map(roomMapper::toRoomDto);
     }
 
     public RoomDto getRoomById(Long id) {
-        RoomEntity foundedRoom = roomRepository.findById(id)
+        var foundedRoom = roomRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Room not found: id=" + id));
         return roomMapper.toRoomDto(foundedRoom);
     }

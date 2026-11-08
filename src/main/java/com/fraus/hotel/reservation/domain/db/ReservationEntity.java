@@ -3,23 +3,16 @@ package com.fraus.hotel.reservation.domain.db;
 import com.fraus.hotel.auth.domain.db.UserEntity;
 import com.fraus.hotel.room.domain.db.RoomEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 
-@Getter
-@Setter
 @Entity
 @Table(name = "reservations")
+@Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class ReservationEntity {
 
     @Id
@@ -50,4 +43,23 @@ public class ReservationEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
+
+    @Builder
+    public ReservationEntity(
+            StatusType status,
+            LocalDate arrivalDate,
+            BigDecimal fullPrice,
+            Instant createdAt,
+            Integer days,
+            RoomEntity room,
+            UserEntity user
+    ) {
+        this.status = status;
+        this.arrivalDate = arrivalDate;
+        this.fullPrice = fullPrice;
+        this.createdAt = createdAt;
+        this.days = days;
+        this.room = room;
+        this.user = user;
+    }
 }

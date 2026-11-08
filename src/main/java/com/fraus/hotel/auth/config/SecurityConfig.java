@@ -16,8 +16,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/css/**", "/js/**", "/img/**").permitAll()
-                        .requestMatchers("/", "/login", "/register").permitAll()
+                        .requestMatchers("/", "/rooms", "/rooms/**", "/login", "/register", "/css/**", "/js/**", "/img/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

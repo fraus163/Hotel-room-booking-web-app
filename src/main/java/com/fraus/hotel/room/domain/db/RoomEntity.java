@@ -13,12 +13,12 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class RoomEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @Setter(AccessLevel.NONE)
     private Long id;
 
     @NonNull
@@ -43,4 +43,23 @@ public class RoomEntity {
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
+
+    @Builder
+    public RoomEntity(
+            @NonNull Set<TagEntity> tags,
+            BigDecimal pricePerNight,
+            Integer area,
+            Integer people,
+            String description,
+            String name,
+            Boolean enabled
+    ) {
+        this.tags = tags;
+        this.pricePerNight = pricePerNight;
+        this.area = area;
+        this.people = people;
+        this.description = description;
+        this.name = name;
+        this.enabled = enabled;
+    }
 }

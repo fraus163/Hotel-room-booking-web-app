@@ -9,14 +9,14 @@
     <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
 </head>
 <body th:replace="~{fragments/layout :: container(~{::#content}, 'rooms')}">
-    <div id="content" class="container flex-column d-flex align-items-center" style="height: 100vh">
-        <form class="d-flex justify-content-center gap-2 mb-3" th:action="@{/rooms}" th:object="${filter}" method="get">
+    <div id="content" class="container-fluid container-lg flex-column d-flex align-items-center">
+        <form class="d-flex justify-content-center gap-2 mb-4 w-100" style="max-width: 600px;" th:action="@{/rooms}" th:object="${filter}" method="get">
             <input th:field="*{name}" type="text" class="form-control" placeholder="Поиск">
             <div class="btn-group">
-                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal" title="Фильтры">
                     <i class="bi bi-filter"></i>
                 </button>
-                <button id="clearFilterBtn" type="button" class="btn btn-danger">
+                <button id="clearFilterBtn" type="button" class="btn btn-danger" title="Очистить">
                     <i class="bi bi-trash-fill"></i>
                 </button>
             </div>
@@ -29,8 +29,8 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <div class="d-flex mb-3">
-                                <div>
+                            <div class="d-flex flex-column flex-sm-row gap-2 mb-3">
+                                <div class="w-100">
                                     <label for="priceFrom" class="form-label small text-muted">Цена от</label>
                                     <input type="number"
                                            th:field="*{priceFrom}"
@@ -39,14 +39,13 @@
                                            placeholder="Введите цену"
                                            autofocus/>
                                 </div>
-                                <div>
+                                <div class="w-100">
                                     <label for="priceTo" class="form-label small text-muted">Цена до</label>
                                     <input type="number"
                                            th:field="*{priceTo}"
                                            min="1"
                                            class="form-control"
-                                           placeholder="Введите цену"
-                                           autofocus/>
+                                           placeholder="Введите цену"/>
                                 </div>
                             </div>
                             <div class="mb-3">
@@ -55,8 +54,7 @@
                                        th:field="*{area}"
                                        min="1"
                                        class="form-control"
-                                       placeholder="Введите площадь"
-                                       autofocus/>
+                                       placeholder="Введите площадь"/>
                             </div>
                             <div>
                                 <label for="people" class="form-label small text-muted">Кол-во людей</label>
@@ -64,8 +62,7 @@
                                        th:field="*{people}"
                                        min="1"
                                        class="form-control"
-                                       placeholder="Введите кол-во людей"
-                                       autofocus/>
+                                       placeholder="Введите кол-во людей"/>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -76,56 +73,56 @@
                 </div>
             </div>
         </form>
-        <div class="d-flex align-items-center" style="height: 100%" th:if="${rooms.isEmpty()}">
-            <h1>Нет доступных номеров :(</h1>
+        <div class="d-flex align-items-center justify-content-center py-5" th:if="${rooms.isEmpty()}">
+            <h2 class="text-muted text-center">Нет доступных номеров :(</h2>
         </div>
-        <div class="container d-flex justify-content-center" th:unless="${rooms.isEmpty()}">
-            <div class="row row-cols-auto d-flex justify-content-center">
-                <div class="col mb-4" th:each="room : ${rooms.getContent()}">
-                    <div class="card" style="width: 18rem; height: 100%">
+        <div class="container-fluid px-0" th:unless="${rooms.isEmpty()}">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4 justify-content-center">
+                <div class="col" th:each="room : ${rooms.getContent()}">
+                    <div class="card h-100 shadow-sm">
                         <div class="card-body">
-                            <h1 th:text="${room.getName()}" class="card-title"></h1>
-                            <p class="card-text" th:text="${room.getDescription()}"></p>
+                            <h2 th:text="${room.name()}" class="card-title fs-4"></h2>
+                            <p class="card-text text-secondary" th:text="${room.description()}"></p>
                             <div class="container p-0">
-                                <div class="row row-cols-auto">
-                                    <div th:each="tag : ${room.getTags()}">
-                                        <h4 class="bg-success p-2 rounded fs-6 text-light" th:text="${tag.getName()}"></h4>
+                                <div class="d-flex flex-wrap gap-1">
+                                    <div th:each="tag : ${room.tags()}">
+                                        <span class="badge bg-success" th:text="${tag.name()}"></span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item">
-                                <p>
+                                <p class="mb-0">
                                     <i class="bi bi-people-fill"></i>
-                                    <span th:text="${room.getPeople()}"></span>
+                                    <span th:text="${room.people()}"></span>
                                     чел.
                                 </p>
                             </li>
                             <li class="list-group-item">
-                                <p>
+                                <p class="mb-0">
                                     <i class="bi bi-house-door-fill"></i>
-                                    <span th:text="${room.getArea()}"></span>
+                                    <span th:text="${room.area()}"></span>
                                     кв.м.
                                 </p>
                             </li>
                             <li class="list-group-item">
-                                <p>
+                                <p class="mb-0">
                                     <i class="bi bi-cash-stack"></i>
-                                    <span th:text="${room.getPricePerNight()}"></span>
+                                    <span th:text="${room.pricePerNight()}"></span>
                                     руб./ночь
                                 </p>
                             </li>
                         </ul>
-                        <div class="card-body" style="max-height: 70px">
-                            <a class="btn btn-primary" th:href="@{/rooms/{id}(id=${room.getId()})}">Забронировать</a>
+                        <div class="card-body d-flex align-items-end" style="max-height: 70px">
+                            <a class="btn btn-primary w-100" th:href="@{/rooms/{id}(id=${room.id()})}">Забронировать</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <nav aria-label="..." th:unless="${rooms.isEmpty()}">
-            <ul class="pagination">
+        <nav aria-label="..." th:unless="${rooms.isEmpty()}" class="mt-4">
+            <ul class="pagination flex-wrap justify-content-center">
                 <li class="page-item"
                     th:classappend="${!rooms.hasPrevious()} ? 'disabled'">
                     <a class="page-link"

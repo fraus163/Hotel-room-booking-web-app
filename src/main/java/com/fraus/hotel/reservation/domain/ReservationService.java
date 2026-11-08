@@ -1,49 +1,49 @@
 package com.fraus.hotel.reservation.domain;
 
 import com.fraus.hotel.auth.domain.db.UserRepository;
+import com.fraus.hotel.exception.RoomAlreadyReservedException;
 import com.fraus.hotel.reservation.domain.db.ReservationEntity;
 import com.fraus.hotel.reservation.domain.db.ReservationRepository;
 import com.fraus.hotel.reservation.domain.db.StatusType;
 import com.fraus.hotel.reservation.web.dto.ReservationDto;
-import com.fraus.hotel.room.domain.db.RoomEntity;
 import com.fraus.hotel.room.domain.db.RoomRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public void reserveRoom(ReservationDto reservationDto, UserDetails user) {
-        var room = roomRepository.findById(reservationDto.getRoomId())
+        var foundedRoom = roomRepository.findById(reservationDto.getRoomId())
                 .orElseThrow(() -> new RuntimeException("Номер не найден: roomId=" + reservationDto.getRoomId()));
-        room.setEnabled(false);
-        var username = user.getUsername();
-        var foundedUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден: username=" + username));
-
-        var reservationToSave = new ReservationEntity(
-                null,
-                StatusType.STATUS_PENDING,
-                LocalDate.now(),
-                new BigDecimal(room.getPricePerNight().doubleValue() * reservationDto.getDays()),
-                Instant.now(),
-                reservationDto.getDays(),
-                room,
-                foundedUser
-        );
+        if (!Boolean.TRUE.equals(foundedRoom.getEnabled())) {
+            throw new RoomAlreadyReservedException("Номер уже забронирован или недоступен");
+        }
+        var foundedUser = userRepository.findByUsername(user.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден: username=" + user.getUsername()));
+        foundedRoom.setEnabled(false);
+        var reservationToSave = ReservationEntity.builder()
+                .status(StatusType.STATUS_PENDING)
+                .arrivalDate(reservationDto.getArrivalDate())
+                .fullPrice(foundedRoom.getPricePerNight().multiply(BigDecimal.valueOf(reservationDto.getDays())))
+                .createdAt(Instant.now())
+                .days(reservationDto.getDays())
+                .room(foundedRoom)
+                .user(foundedUser)
+                .build();
         reservationRepository.save(reservationToSave);
     }
 }
