@@ -12,10 +12,12 @@ import java.time.LocalDate;
  * DTO for {@link ReservationEntity}
  */
 public record ReservationResponseDto(
+        Long id,
         StatusType status,
         LocalDate arrivalDate,
         BigDecimal fullPrice,
         Instant createdAt,
-        Integer days, RoomDto room
+        Integer days,
+        RoomDto room
 ) {
 }

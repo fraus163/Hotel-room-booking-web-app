@@ -10,6 +10,9 @@
 </head>
 <body th:replace="~{fragments/layout :: container(~{::#content}, 'profile')}">
     <div id="content" class="d-flex flex-column w-100">
+        <div th:if="${successMessage != null}" th:text="${successMessage}" class="alert alert-success py-2 px-3 mb-4 shadow-sm" role="alert"></div>
+        <div th:if="${errorMessage != null}" th:text="${errorMessage}" class="alert alert-danger py-2 px-3 mb-4 shadow-sm" role="alert"></div>
+
         <div class="card mb-4 shadow-sm">
             <div class="card-body">
                 <h1 class="card-title fs-3 mb-4">Информация о профиле</h1>
@@ -34,42 +37,51 @@
                 <div class="container-fluid p-0" th:unless="${userDto.reservations().isEmpty()}">
                     <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4">
                         <div class="col" th:each="reservation : ${userDto.reservations()}">
-                            <div class="card h-100 shadow-sm">
-                                <div class="card-body">
-                                    <h2 th:text="${reservation.room().name()}" class="card-title fs-5"></h2>
+                            <div class="card h-100 shadow-sm d-flex flex-column justify-content-between">
+                                <div>
+                                    <div class="card-body">
+                                        <h2 th:text="${reservation.room().name()}" class="card-title fs-5"></h2>
+                                    </div>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">
+                                            <label for="arrivalDate" class="form-label small text-muted">Дата заселения</label>
+                                            <h5 id="arrivalDate" th:text="${reservation.arrivalDate()}"></h5>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <label for="days" class="form-label small text-muted">Дней пребывания</label>
+                                            <h5 id="days" th:text="${reservation.days()}"></h5>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <label for="fullPrice" class="form-label small text-muted">Полная стоимость</label>
+                                            <h5 id="fullPrice">
+                                                <span th:text="${reservation.fullPrice()}"></span>
+                                                руб.
+                                            </h5>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <label for="status" class="form-label small text-muted">Статус заявки</label>
+                                            <h5 id="status" th:switch="${reservation.status().name()}">
+                                                <span th:case="'STATUS_PENDING'" class="badge bg-warning text-dark">В ожидании</span>
+                                                <span th:case="'STATUS_APPROVED'" class="badge bg-success">Принято</span>
+                                                <span th:case="'STATUS_CANCELLED'" class="badge bg-danger">Закрыто</span>
+                                                <span th:case="*" class="badge bg-secondary">Неизвестный статус</span>
+                                            </h5>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <label for="createdAt" class="form-label small text-muted">Дата и время отправления заявки</label>
+                                            <h6 id="createdAt" class="text-secondary" th:text="${#temporals.format(
+                                                                reservation.createdAt().atZone(T(java.time.ZoneId).of('Europe/Moscow')),
+                                                                'dd.MM.yyyy HH:mm')}"></h6>
+                                        </li>
+                                    </ul>
                                 </div>
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item">
-                                        <label for="arrivalDate" class="form-label small text-muted">Дата заселения</label>
-                                        <h5 id="arrivalDate" th:text="${reservation.arrivalDate()}"></h5>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <label for="days" class="form-label small text-muted">Дней пребывания</label>
-                                        <h5 id="days" th:text="${reservation.days()}"></h5>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <label for="fullPrice" class="form-label small text-muted">Полная стоимость</label>
-                                        <h5 id="fullPrice">
-                                            <span th:text="${reservation.fullPrice()}"></span>
-                                            руб.
-                                        </h5>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <label for="status" class="form-label small text-muted">Статус заявки</label>
-                                        <h5 id="status" th:switch="${reservation.status().name()}">
-                                            <span th:case="'STATUS_PENDING'" class="badge bg-warning text-dark">В ожидании</span>
-                                            <span th:case="'STATUS_APPROVED'" class="badge bg-success">Принято</span>
-                                            <span th:case="'STATUS_CANCELLED'" class="badge bg-danger">Закрыто</span>
-                                            <span th:case="*" class="badge bg-secondary">Неизвестный статус</span>
-                                        </h5>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <label for="createdAt" class="form-label small text-muted">Дата и время отправления заявки</label>
-                                        <h6 id="createdAt" class="text-secondary" th:text="${#temporals.format(
-                                                            reservation.createdAt().atZone(T(java.time.ZoneId).of('Europe/Moscow')),
-                                                            'dd.MM.yyyy HH:mm')}"></h6>
-                                    </li>
-                                </ul>
+                                <div class="card-footer bg-white border-top-0 pt-0 pb-3" th:if="${reservation.status().name() == 'STATUS_PENDING'}">
+                                    <form th:action="@{/reservations/{id}/cancel(id=${reservation.id()})}" method="post" onsubmit="return confirm('Вы действительно хотите отменить это бронирование?');">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                                            <i class="bi bi-x-circle me-1"></i>Отменить бронь
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>

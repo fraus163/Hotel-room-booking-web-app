@@ -6,10 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/reservations")
@@ -21,10 +19,22 @@ public class ReservationController {
     @PostMapping
     public String reserveRoom(
             @ModelAttribute(name = "reservationDto") ReservationDto reservationDto,
-            @AuthenticationPrincipal UserDetails user
+            @AuthenticationPrincipal UserDetails user,
+            RedirectAttributes redirectAttributes
     ) {
         reservationService.reserveRoom(reservationDto, user);
+        redirectAttributes.addFlashAttribute("successMessage", "Номер успешно забронирован!");
         return "redirect:/rooms";
     }
-}
 
+    @PostMapping("/{id}/cancel")
+    public String cancelReservation(
+            @PathVariable("id") Long id,
+            @AuthenticationPrincipal UserDetails user,
+            RedirectAttributes redirectAttributes
+    ) {
+        reservationService.cancelReservation(id, user);
+        redirectAttributes.addFlashAttribute("successMessage", "Бронирование успешно отменено");
+        return "redirect:/profile";
+    }
+}

@@ -10,6 +10,9 @@
 </head>
 <body th:replace="~{fragments/layout :: container(~{::#content}, 'rooms')}">
     <div id="content" class="container-fluid container-lg flex-column d-flex align-items-center">
+        <div th:if="${successMessage != null}" th:text="${successMessage}" class="alert alert-success py-2 px-3 small w-100 mb-3 shadow-sm" style="max-width: 600px;" role="alert"></div>
+        <div th:if="${errorMessage != null}" th:text="${errorMessage}" class="alert alert-danger py-2 px-3 small w-100 mb-3 shadow-sm" style="max-width: 600px;" role="alert"></div>
+
         <form class="d-flex justify-content-center gap-2 mb-4 w-100" style="max-width: 600px;" th:action="@{/rooms}" th:object="${filter}" method="get">
             <input th:field="*{name}" type="text" class="form-control" placeholder="Поиск">
             <div class="btn-group">

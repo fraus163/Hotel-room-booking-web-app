@@ -12,12 +12,14 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "reservations")
 @Getter
+@Setter
 @NoArgsConstructor
 public class ReservationEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @Setter(AccessLevel.NONE)
     private Long id;
 
     @Enumerated(EnumType.STRING)

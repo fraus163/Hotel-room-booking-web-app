@@ -8,6 +8,7 @@ import com.fraus.hotel.reservation.domain.db.StatusType;
 import com.fraus.hotel.reservation.web.dto.ReservationDto;
 import com.fraus.hotel.room.domain.db.RoomRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -45,5 +46,22 @@ public class ReservationService {
                 .user(foundedUser)
                 .build();
         reservationRepository.save(reservationToSave);
+    }
+
+    @Transactional
+    public void cancelReservation(Long reservationId, UserDetails user) {
+        var reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new RuntimeException("Бронирование не найдено: id=" + reservationId));
+
+        if (!reservation.getUser().getUsername().equals(user.getUsername())) {
+            throw new AccessDeniedException("Вы не можете отменить чужое бронирование");
+        }
+
+        if (reservation.getStatus() == StatusType.STATUS_CANCELLED) {
+            throw new IllegalStateException("Бронирование уже отменено");
+        }
+
+        reservation.setStatus(StatusType.STATUS_CANCELLED);
+        reservation.getRoom().setEnabled(true);
     }
 }
